@@ -1,3 +1,4 @@
+// astro.config.mjs
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 
@@ -5,7 +6,9 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [tailwind()],
 
-  site: 'https://davidum2.github.io',
-  // Reemplaza <el-nombre-de-tu-repo> con el nombre de tu repositorio
-  base: '/sitio-web',
+  // CAMBIO CLAVE: El sitio ahora es tu dominio personalizado.
+  site: 'https://senderozen.com',
+
+  // CAMBIO CLAVE: Ya no necesitamos la propiedad 'base' al usar un dominio raíz.
+  // base: '/sitio-web',  <-- Elimina o comenta esta línea.
 });
