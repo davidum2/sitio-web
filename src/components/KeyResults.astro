@@ -1,0 +1,85 @@
+---
+// src/components/KeyResults.astro
+---
+
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-8">
+    <div class="text-center max-w-3xl mx-auto">
+      <h2 class="font-heading text-4xl md:text-5xl font-bold text-dark-gray">
+        Recupera lo que más importa: Tu Tiempo y Tu Enfoque
+      </h2>
+    </div>
+
+    <div class="mt-20 grid md:grid-cols-3 gap-12">
+      <!-- Resultado 1: Más Tiempo para Sanar -->
+      <div class="bg-light-gray rounded-lg shadow-lg pillar">
+        <a href="#">
+          <img class="rounded-t-lg" src="/imagenes/Reloj de arena.png" alt="Reloj de arena transformándose en planta" />
+        </a>
+        <div class="p-5">
+          <a href="#">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-dark-gray">Horas de administración, transformadas en minutos de supervisión.</h5>
+          </a>
+          <p class="mb-3 font-normal text-dark-gray/80">Imagina terminar tu día y darte cuenta de que no respondiste ni un solo mensaje de logística. Tu asistente digital se encargó de todo. Ese tiempo ahora es tuyo: para meditar, para estudiar, para estar presente.</p>
+        </div>
+      </div>
+
+      <!-- Resultado 2: Una Primera Impresión Impecable -->
+      <div class="bg-light-gray rounded-lg shadow-lg pillar">
+        <a href="#">
+          <img class="rounded-t-lg" src="/imagenes/transformacion del caos a la calma.png" alt="Tarjetas de presentación caóticas a ordenadas" />
+        </a>
+        <div class="p-5">
+          <a href="#">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-dark-gray">Proyecta la serenidad y el profesionalismo que te definen.</h5>
+          </a>
+          <p class="mb-3 font-normal text-dark-gray/80">Cada paciente potencial recibe una respuesta instantánea, clara y empática, sin importar la hora. Esta primera interacción establece un estándar de confianza y cuidado que te distingue del resto, incluso antes de la primera cita.</p>
+        </div>
+      </div>
+
+      <!-- Resultado 3: Crece sin Sacrificar tu Paz -->
+      <div class="bg-light-gray rounded-lg shadow-lg pillar">
+        <a href="#">
+          <img class="rounded-t-lg" src="/imagenes/no a más estrés.png" alt="Arroyo dividiéndose en varios caminos" />
+        </a>
+        <div class="p-5">
+          <a href="#">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-dark-gray">Abre las puertas a más pacientes, no a más estrés.</h5>
+          </a>
+          <p class="mb-3 font-normal text-dark-gray/80">Nuestro sistema filtra, informa y agenda por ti, permitiéndote manejar un mayor volumen de interés sin que tu carga de trabajo aumente. Tu práctica puede florecer, mientras tú te mantienes en tu centro.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const pillars = document.querySelectorAll('.pillar');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.5
+  });
+
+  pillars.forEach(pillar => {
+    observer.observe(pillar);
+  });
+</script>
+
+<style>
+  .pillar {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .pillar.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>

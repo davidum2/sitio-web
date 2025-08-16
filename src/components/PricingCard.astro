@@ -1,0 +1,129 @@
+---
+// src/components/PricingCard.astro
+interface Props {
+  plan: {
+    name: string;
+    description: string;
+    setupFee: number;
+    retainerFee: number;
+    isRecommended: boolean;
+    mainAdvantage: string;
+    commitment: string;
+    ctaText: string;
+    ctaLink: string;
+  };
+  includedFeatures: string[];
+}
+
+const { plan, includedFeatures } = Astro.props;
+---
+
+<div
+  class:list={[
+    'bg-white p-8 rounded-xl shadow-md border border-gray-200 relative',
+    {
+      'shadow-lg border-2 border-persian-green-500 transform md:scale-105':
+        plan.isRecommended,
+    },
+  ]}
+>
+  {
+    plan.isRecommended && (
+      <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-persian-green-500 text-white font-heading text-sm font-bold px-4 py-1 rounded-full">
+        RECOMENDADO
+      </div>
+    )
+  }
+  <h3 class="font-heading text-2xl font-bold text-persian-green-500">
+    {plan.name}
+  </h3>
+  <p class="font-sans text-dark-gray/70 mb-6 min-h-[40px]">
+    {plan.description}
+  </p>
+  <div class="mb-6">
+    <p class="font-sans text-dark-gray/70 text-lg">
+      Inversión Única de Implementación
+    </p>
+    <span class="font-heading text-4xl font-bold text-dark-gray"
+      >${plan.setupFee.toLocaleString('es-MX')} MXN</span
+    >
+  </div>
+  <div class="mb-6">
+    <p class="font-sans text-dark-gray/70 text-lg">
+      Retainer de Piloto Automático
+    </p>
+    <span class="font-heading text-4xl font-bold text-dark-gray"
+      >${plan.retainerFee.toLocaleString('es-MX')} MXN</span
+    >
+    <span class="font-sans text-dark-gray/70">/ al mes</span>
+  </div>
+  <h4 class="font-heading text-xl font-semibold text-dark-gray mt-8 mb-4">
+    Tu Inversión Incluye Siempre:
+  </h4>
+  <ul class="space-y-3 mb-8">
+    {
+      includedFeatures.map((feature) => (
+        <li class="flex items-start gap-3 font-sans text-dark-gray/90">
+          <svg
+            class="w-5 h-5 text-persian-green-500 flex-shrink-0 mt-1"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 13.3636L8.03448 17L19 7"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          {feature}
+        </li>
+      ))
+    }
+  </ul>
+  <ul class="space-y-3 mb-8">
+    <li class="flex items-center gap-3 font-sans text-dark-gray/90">
+      <svg
+        class="w-5 h-5 text-persian-green-500 flex-shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 13.3636L8.03448 17L19 7"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+      <div>
+        <span class="font-bold">Ventaja Principal:</span>
+        {plan.mainAdvantage}
+      </div>
+    </li>
+    <li class="flex items-center gap-3 font-sans text-dark-gray/90">
+      <svg
+        class="w-5 h-5 text-persian-green-500 flex-shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 13.3636L8.03448 17L19 7"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+      <div><span class="font-bold">Compromiso:</span> {plan.commitment}</div>
+    </li>
+  </ul>
+  <a
+    href={plan.ctaLink}
+    class="w-full text-center block bg-persian-green-500 text-white font-heading font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-colors"
+  >
+    {plan.ctaText}
+  </a>
+</div>

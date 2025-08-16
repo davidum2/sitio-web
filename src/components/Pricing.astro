@@ -1,0 +1,67 @@
+---
+// src/components/Pricing.astro
+import PricingCard from './PricingCard.astro';
+
+// 1. Centralizamos los datos de los planes para fácil mantenimiento
+const plans = [
+  {
+    name: 'Plan Flexible',
+    description:
+      'Ideal para quienes pueden hacer la inversión inicial a cambio de una mensualidad más baja.',
+    setupFee: 11270,
+    retainerFee: 2988,
+    isRecommended: false,
+    mainAdvantage: 'Cuota mensual más baja.',
+    commitment: 'Cancela cuando quieras.',
+    ctaText: 'Elegir Plan Flexible',
+    ctaLink: '#',
+  },
+  {
+    name: 'Plan Anual Inteligente',
+    description:
+      'La opción más popular para empezar hoy sin una gran inversión inicial.',
+    setupFee: 0,
+    retainerFee: 3969,
+    isRecommended: true,
+    mainAdvantage: 'Acceso inmediato sin pago inicial.',
+    commitment: 'Contrato de 12 meses.',
+    ctaText: 'Empezar sin Inversión Inicial',
+    ctaLink: '#',
+  },
+];
+
+// 2. Definimos las características incluidas, que son las mismas para ambos planes
+const includedFeatures = [
+  'Implementación Completa "Llave en Mano": Nos encargamos de toda la configuración técnica y estratégica inicial.',
+  'Asistente Híbrido con IA para Redes Sociales: Gestión inteligente de comentarios y mensajes para filtrar y capturar leads 24/7.',
+  'Funnel Automatizado en WhatsApp: Llevamos a tus prospectos desde el primer hola hasta la cita agendada y pagada.',
+  'Motor de Reservaciones y CRM Integrado: Tu agenda y tu base de datos de pacientes, en perfecta y automática sincronía.',
+  'Soporte y Mantenimiento Continuo: Nos aseguramos de que tu sistema siempre esté funcionando, para que tú no tengas que hacerlo.',
+];
+---
+
+<section id="precios" class="py-20 bg-light-gray">
+  <div class="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2
+      class="font-heading text-4xl font-semibold text-dark-gray text-center mb-4"
+    >
+      Una Inversión Simple en tu Completa Tranquilidad
+    </h2>
+    <p
+      class="text-center font-sans text-lg text-dark-gray/80 mb-12 max-w-3xl mx-auto"
+    >
+      Creemos que recuperar tu energía no debería requerir decisiones
+      complicadas. Por eso, nuestro servicio es uno solo: completo y sin
+      limitaciones. Hemos diseñado dos caminos flexibles para que elijas cómo
+      empezar tu viaje hacia la automatización y la paz mental.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-8 items-center max-w-4xl mx-auto">
+      {
+        plans.map((plan) => (
+          <PricingCard plan={plan} includedFeatures={includedFeatures} />
+        ))
+      }
+    </div>
+  </div>
+</section>

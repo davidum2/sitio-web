@@ -1,0 +1,124 @@
+---
+// src/components/ChaosToCalm.astro
+---
+
+<section
+  class="py-20 bg-light-gray container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
+>
+  <div class="container mx-auto px-8">
+    <div class="text-center max-w-3xl mx-auto">
+      <h2 class="font-heading text-4xl md:text-5xl font-bold text-dark-gray">
+        Mientras tú sanas, tu asistente digital se encarga del resto.
+      </h2>
+      <p class="font-sans text-lg md:text-xl mt-6 text-dark-gray/80">
+        Imagina que cada pregunta, cada mensaje y cada reserva se gestiona de
+        forma inteligente y empática, sin que tú tengas que intervenir. Hemos
+        creado ese sistema para ti.
+      </p>
+    </div>
+
+    <div class="mt-20 grid md:grid-cols-1 gap-16">
+      <!-- Paso 1: El Primer Contacto Inteligente -->
+      <div
+        class="flex flex-col md:flex-row items-center gap-8 md:gap-16 pillar"
+      >
+        <div class="md:w-1/2 text-center md:text-left">
+          <h3 class="font-heading text-3xl font-bold text-dark-gray">
+            Tu asistente responde y cautiva en todas tus redes.
+          </h3>
+          <p class="font-sans text-lg mt-4 text-dark-gray/80">
+            Un chatbot entrenado con tu voz saluda, informa y califica a cada
+            persona interesada en Instagram o Facebook.
+          </p>
+        </div>
+        <div class="md:w-1/2">
+          <img
+            src="/imagenes/bot_respondiendo.png"
+            alt="Bot respondiendo mensajes"
+            class="rounded-lg shadow-lg"
+          />
+        </div>
+      </div>
+
+      <!-- Paso 2: El Puente hacia WhatsApp -->
+      <div
+        class="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16 pillar"
+      >
+        <div class="md:w-1/2 text-center md:text-left">
+          <h3 class="font-heading text-3xl font-bold text-dark-gray">
+            Centralizamos a los pacientes listos para dar el siguiente paso.
+          </h3>
+          <p class="font-sans text-lg mt-4 text-dark-gray/80">
+            Guiamos suavemente a los prospectos más serios desde tus redes
+            sociales hacia un canal de WhatsApp dedicado.
+          </p>
+        </div>
+        <div class="md:w-1/2">
+          <img
+            src="/imagenes/centralizar_whatsapp.png"
+            alt="Centralizar conversaciones en WhatsApp"
+            class="rounded-lg shadow-lg"
+          />
+        </div>
+      </div>
+
+      <!-- Paso 3: La Magia Final en WhatsApp -->
+      <div
+        class="flex flex-col md:flex-row items-center gap-8 md:gap-16 pillar"
+      >
+        <div class="md:w-1/2 text-center md:text-left">
+          <h3 class="font-heading text-3xl font-bold text-dark-gray">
+            La cita perfecta, agendada y pagada.
+          </h3>
+          <p class="font-sans text-lg mt-4 text-dark-gray/80">
+            Dentro de WhatsApp, tu asistente comparte horarios, resuelve dudas
+            finales, reserva la cita e incluso gestiona el pago.
+          </p>
+        </div>
+        <div class="md:w-1/2">
+          <img
+            src="/imagenes/bot whatsapp.png"
+            alt="Bot agendando cita en WhatsApp"
+            class="rounded-lg shadow-lg"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const pillars = document.querySelectorAll('.pillar');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    },
+    {
+      threshold: 0.5,
+    }
+  );
+
+  pillars.forEach((pillar) => {
+    observer.observe(pillar);
+  });
+</script>
+
+<style>
+  .pillar {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.5s ease-out,
+      transform 0.5s ease-out;
+  }
+
+  .pillar.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
