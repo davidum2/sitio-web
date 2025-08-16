@@ -3,31 +3,31 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main # La rama que dispara el despliegue
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js 🔧
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18' # La versión de Node que usas
+      - name: Install, build, and upload your site
+        uses: withastro/action@v3
 
-      - name: Install dependencies 📦
-        run: npm install
-
-      - name: Build 🏗️
-        run: npm run build
-
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages # La rama donde se subirán los archivos construidos
-          folder: dist # La carpeta que Astro construye
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
