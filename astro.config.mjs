@@ -6,9 +6,6 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [tailwind()],
 
-  // CAMBIO CLAVE: El sitio ahora es tu dominio personalizado.
-  site: 'https://senderozen.com',
-
-  // CAMBIO CLAVE: Ya no necesitamos la propiedad 'base' al usar un dominio raíz.
-  // base: '/sitio-web',  <-- Elimina o comenta esta línea.
+  site: 'https://davidum2.github.io',
+  base: '/sitio-web',
 });
