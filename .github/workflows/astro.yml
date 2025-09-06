@@ -67,6 +67,11 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: ${{ env.BUILD_PATH }}
       - name: Build with Astro
+        # --- INICIA EL CAMBIO AQUÍ ---
+        env:
+          PUBLIC_N8N_HOST: ${{ secrets.PUBLIC_N8N_HOST }}
+          PUBLIC_N8N_WEBHOOK_ID: ${{ secrets.PUBLIC_N8N_WEBHOOK_ID }}
+        # --- TERMINA EL CAMBIO ---
         run: |
           ${{ steps.detect-package-manager.outputs.runner }} astro build \
             --site "${{ steps.pages.outputs.origin }}" \
