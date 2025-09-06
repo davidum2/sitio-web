@@ -39,26 +39,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 4. Construye el sitio estático.
-      #    Este es el paso más importante: inyectamos los secrets como variables de entorno
-      #    con el prefijo PUBLIC_, que es lo que Astro necesita.
+      # 4. PASO DE DEPURACIÓN AÑADIDO
+      # Este paso verifica si los secrets están disponibles ANTES de construir el sitio.
+      - name: Debug Secrets
+        run: |
+          if [ -z "${{ secrets.PUBLIC_N8N_HOST }}" ]; then
+            echo "Error: El secreto PUBLIC_N8N_HOST no está definido o está vacío."
+            exit 1
+          else
+            echo "Éxito: El secreto PUBLIC_N8N_HOST fue encontrado."
+          fi
+          if [ -z "${{ secrets.PUBLIC_N8N_WEBHOOK_ID }}" ]; then
+            echo "Error: El secreto PUBLIC_N8N_WEBHOOK_ID no está definido o está vacío."
+            exit 1
+          else
+            echo "Éxito: El secreto PUBLIC_N8N_WEBHOOK_ID fue encontrado."
+          fi
+      
+      # 5. Construye el sitio estático.
+      #    Este paso ahora solo se ejecutará si el paso de depuración fue exitoso.
       - name: Build
         run: npm run build
         env:
           PUBLIC_N8N_HOST: ${{ secrets.PUBLIC_N8N_HOST }}
           PUBLIC_N8N_WEBHOOK_ID: ${{ secrets.PUBLIC_N8N_WEBHOOK_ID }}
       
-      # 5. Configura GitHub Pages para el despliegue.
+      # 6. Configura GitHub Pages para el despliegue.
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # 6. Sube los archivos construidos (de la carpeta /dist) como un artefacto.
+      # 7. Sube los archivos construidos (de la carpeta /dist) como un artefacto.
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
-      # 7. Despliega el artefacto subido a GitHub Pages.
+      # 8. Despliega el artefacto subido a GitHub Pages.
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
