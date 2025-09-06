@@ -1,90 +1,64 @@
-name: Deploy Astro site to Pages
+# Nombre del workflow, claro y conciso.
+name: Deploy Astro Site to GitHub Pages
 
 on:
+  # Se ejecuta cuando haces un "push" a la rama `main`.
   push:
     branches: ["main"]
+
+  # Te permite ejecutarlo manualmente desde la pestaña de "Actions" en GitHub.
   workflow_dispatch:
 
+# Permisos necesarios que la Action necesita para leer el código y desplegar a Pages.
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-env:
-  BUILD_PATH: "."
-
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    # --- CAMBIO CRÍTICO #1: AÑADE ESTA LÍNEA ---
-    # Esto le da al job de "build" acceso a los secrets del entorno "github-pages"
-    environment: github-pages
-    # -----------------------------------------
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v5
-      - name: Install dependencies
-        run: npm ci
-        working-directory: ${{ env.BUILD_PATH }}
-      
-      # --- CAMBIO #2: AÑADE ESTE PASO DE DEPURACIÓN (OPCIONAL) ---
-      # Este paso imprimirá las variables en el log para que veas si se leyeron.
-      - name: Debug Environment Variables
-        env:
-          HOST_VAR: ${{ secrets.PUBLIC_N8N_HOST }}
-          ID_VAR: ${{ secrets.PUBLIC_N8N_WEBHOOK_ID }}
-        run: |
-          echo "Host Variable: $HOST_VAR"
-          echo "Webhook ID is set: ${{ env.ID_VAR != '' }}"
-      # ----------------------------------------------------
-
-      - name: Build with Astro
-        env:
-          PUBLIC_N8N_HOST: ${{ secrets.PUBLIC_N8N_HOST }}
-          PUBLIC_N8N_WEBHOOK_ID: ${{ secrets.PUBLIC_N8N_WEBHOOK_ID }}
-        run: |
-          npx --no-install astro build \
-            --site "${{ steps.pages.outputs.origin }}" \
-            --base "${{ steps.pages.outputs.base_path }}"
-        working-directory: ${{ env.BUILD_PATH }}
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ${{ env.BUILD_PATH }}/dist
-
   deploy:
+    # Define el entorno de despliegue. Es crucial para que los "secrets" de ese entorno estén disponibles.
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
+    
     runs-on: ubuntu-latest
-    name: Deploy
     steps:
+      # 1. Descarga tu código del repositorio a la máquina virtual.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Configura el entorno de Node.js, usando la versión 20 y habilitando el caché de npm para más velocidad.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # 3. Instala las dependencias del proyecto de forma limpia.
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Construye el sitio estático.
+      #    Este es el paso más importante: inyectamos los secrets como variables de entorno
+      #    con el prefijo PUBLIC_, que es lo que Astro necesita.
+      - name: Build
+        run: npm run build
+        env:
+          PUBLIC_N8N_HOST: ${{ secrets.PUBLIC_N8N_HOST }}
+          PUBLIC_N8N_WEBHOOK_ID: ${{ secrets.PUBLIC_N8N_WEBHOOK_ID }}
+      
+      # 5. Configura GitHub Pages para el despliegue.
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 6. Sube los archivos construidos (de la carpeta /dist) como un artefacto.
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      # 7. Despliega el artefacto subido a GitHub Pages.
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
