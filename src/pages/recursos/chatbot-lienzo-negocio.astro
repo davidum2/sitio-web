@@ -1,12 +1,12 @@
 ---
-// src/pages/recursos/chatbot-lienzo-negocio.astro
 import Layout from '../../layouts/Layout.astro';
-import Chatbot from '../../components/Chatbot.astro'; // Importamos el componente corregido
+import Chatbot from '../../components/Chatbot.astro';
 
-// --- CONFIGURACIÓN ---
-// Usamos variables de entorno para mayor seguridad y flexibilidad.
+// Leemos las variables de entorno como antes.
 const n8nHost = import.meta.env.PUBLIC_N8N_HOST;
 const n8nWebhookId = import.meta.env.PUBLIC_N8N_WEBHOOK_ID;
+
+const isConfigured = n8nHost && n8nWebhookId;
 ---
 
 <Layout title="Asistente de Modelo de Negocio">
@@ -18,22 +18,24 @@ const n8nWebhookId = import.meta.env.PUBLIC_N8N_WEBHOOK_ID;
         </h1>
         <p class="mt-4 text-lg text-dark-gray/80">
           Este chatbot te guiará paso a paso para definir los 9 bloques del
-          Lienzo de Modelo de Negocio (Business Model Canvas) y estructurar tu
-          práctica terapéutica.
+          Lienzo de Modelo de Negocio (Business Model Canvas).
         </p>
       </div>
 
       <!-- Renderizado condicional del Chatbot -->
       {
-        n8nHost && n8nWebhookId ? (
-          <div class="mt-12 w-full max-w-2xl h-[600px]">
+        isConfigured ? (
+          // 1. Creamos un contenedor con un tamaño definido (alto y ancho).
+          //    El chatbot se renderizará para llenar este espacio.
+          <div class="mt-12 w-full max-w-3xl h-[70vh] min-h-[500px] border border-gray-200 rounded-lg shadow-md">
+            {/* 2. Llamamos al componente con mode="embed" */}
             <Chatbot
               host={n8nHost}
               webhookId={n8nWebhookId}
               mode="embed"
               title="Asistente de Lienzo de Negocio"
-              initialBotMessage="¡Hola! Soy tu asistente para el Modelo de Negocio. ¿Estás listo para comenzar a definir tu propuesta de valor?"
-              placeholderText="Escribe tu respuesta aquí..."
+              initialBotMessage="¡Hola! Soy tu asistente para el Modelo de Negocio. ¿Estás listo para comenzar?"
+              class="h-full w-full"
             />
           </div>
         ) : (
@@ -42,12 +44,6 @@ const n8nWebhookId = import.meta.env.PUBLIC_N8N_WEBHOOK_ID;
             <p class="mt-2">
               El chatbot no se puede mostrar porque las variables de entorno no
               están configuradas correctamente.
-            </p>
-            <p class="mt-4 text-sm">
-              Asegúrate de que tu archivo <code>.env</code> exista en la raíz
-              del proyecto y contenga las variables <code>PUBLIC_N8N_HOST</code>{' '}
-              y <code>PUBLIC_N8N_WEBHOOK_ID</code>. Luego, reinicia el servidor
-              de desarrollo.
             </p>
           </div>
         )
