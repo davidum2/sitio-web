@@ -1,0 +1,57 @@
+---
+// src/components/Chatbot.astro
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'div'> {
+  host: string;
+  webhookId: string;
+  mode?: 'bubble' | 'embed';
+  title?: string;
+  initialBotMessage?: string;
+  placeholderText?: string;
+}
+
+const {
+  host,
+  webhookId,
+  mode = 'bubble',
+  title = 'Asistente Virtual',
+  initialBotMessage = '¡Hola! ¿Cómo puedo ayudarte?',
+  placeholderText = 'Escribe tu mensaje...',
+  ...rest
+} = Astro.props;
+
+// 1. Construir la URL completa del webhook.
+const webhookUrl = `${host}/webhook/${webhookId}/chat`;
+
+// 2. Generar un ID único para el contenedor si el modo es 'embed'.
+const embedTargetId =
+  mode === 'embed'
+    ? `n8n-chat-embed-${Math.random().toString(36).substring(2, 9)}`
+    : undefined;
+
+// 3. Construir el objeto de configuración que pasaremos al script.
+const chatOptions = {
+  webhookUrl,
+  mode,
+  chatTitle: title,
+  welcomeMessage: initialBotMessage,
+  placeholder: placeholderText,
+  ...(embedTargetId && { targetElementId: embedTargetId }),
+};
+---
+
+<!-- 4. El div contenedor. Si es 'embed', tendrá el ID de destino y aplicará clases/estilos. -->
+<div id={embedTargetId} {...rest}>
+  {/* El CSS se carga una sola vez desde el CDN */}
+  <link
+    href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
+    rel="stylesheet"
+  />
+
+  {/* Este script importa y ejecuta el chat con nuestra configuración */}
+  <script define:vars={{ options: chatOptions }} type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+    createChat(options);
+  </script>
+</div>

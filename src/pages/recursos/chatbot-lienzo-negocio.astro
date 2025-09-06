@@ -1,0 +1,57 @@
+---
+// src/pages/recursos/chatbot-lienzo-negocio.astro
+import Layout from '../../layouts/Layout.astro';
+import Chatbot from '../../components/Chatbot.astro'; // Importamos el componente corregido
+
+// --- CONFIGURACIÓN ---
+// Usamos variables de entorno para mayor seguridad y flexibilidad.
+const n8nHost = import.meta.env.PUBLIC_N8N_HOST;
+const n8nWebhookId = import.meta.env.PUBLIC_N8N_WEBHOOK_ID;
+---
+
+<Layout title="Asistente de Modelo de Negocio">
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-8 flex flex-col items-center">
+      <div class="text-center max-w-3xl mx-auto">
+        <h1 class="font-heading text-4xl md:text-5xl font-bold text-dark-gray">
+          Asistente Interactivo para tu Modelo de Negocio
+        </h1>
+        <p class="mt-4 text-lg text-dark-gray/80">
+          Este chatbot te guiará paso a paso para definir los 9 bloques del
+          Lienzo de Modelo de Negocio (Business Model Canvas) y estructurar tu
+          práctica terapéutica.
+        </p>
+      </div>
+
+      <!-- Renderizado condicional del Chatbot -->
+      {
+        n8nHost && n8nWebhookId ? (
+          <div class="mt-12 w-full max-w-2xl h-[600px]">
+            <Chatbot
+              host={n8nHost}
+              webhookId={n8nWebhookId}
+              mode="embed"
+              title="Asistente de Lienzo de Negocio"
+              initialBotMessage="¡Hola! Soy tu asistente para el Modelo de Negocio. ¿Estás listo para comenzar a definir tu propuesta de valor?"
+              placeholderText="Escribe tu respuesta aquí..."
+            />
+          </div>
+        ) : (
+          <div class="mt-12 w-full max-w-2xl text-center p-8 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <h3 class="font-bold text-lg">Error de Configuración</h3>
+            <p class="mt-2">
+              El chatbot no se puede mostrar porque las variables de entorno no
+              están configuradas correctamente.
+            </p>
+            <p class="mt-4 text-sm">
+              Asegúrate de que tu archivo <code>.env</code> exista en la raíz
+              del proyecto y contenga las variables <code>PUBLIC_N8N_HOST</code>{' '}
+              y <code>PUBLIC_N8N_WEBHOOK_ID</code>. Luego, reinicia el servidor
+              de desarrollo.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Layout>
