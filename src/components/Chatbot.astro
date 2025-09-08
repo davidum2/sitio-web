@@ -24,34 +24,198 @@ const {
 // 1. Construir la URL completa del webhook.
 const webhookUrl = `${host}/webhook/${webhookId}/chat`;
 
-// 2. Generar un ID único para el contenedor si el modo es 'embed'.
-const embedTargetId =
-  mode === 'embed'
-    ? `n8n-chat-embed-${Math.random().toString(36).substring(2, 9)}`
-    : undefined;
+// 2. Usar siempre un ID fijo para el contenedor embebido.
+const embedTargetId = 'n8n-chat-embed';
 
-// 3. Construir el objeto de configuración que pasaremos al script.
+// 3. Usar mode: 'fullscreen' y target: '#n8n-chat-embed' según la documentación oficial.
 const chatOptions = {
   webhookUrl,
-  mode,
-  chatTitle: title,
-  welcomeMessage: initialBotMessage,
-  placeholder: placeholderText,
-  ...(embedTargetId && { targetElementId: embedTargetId }),
+  showWelcomeScreen: false,
+  defaultLanguage: 'es',
+  mode: 'fullscreen',
+  target: `#${embedTargetId}`,
+  initialMessages: [
+    '¡Hola! Soy Guía Zen AI, tu asesor especializado en estructurar negocios del sector del bienestar.',
+
+    'Mi objetivo es ayudarte a crear tu Business Model Canvas completo, paso a paso, para que tengas un plan de acción claro para tu emprendimiento.',
+
+    'Para comenzar, hablemos del primer punto: tus Segmentos de Clientes. ¿A quién te diriges exactamente con tu servicio o producto? Si no lo tienes completamente claro, no te preocupes, podemos explorarlo juntos.',
+  ],
+  i18n: {
+    es: {
+      title: ' Asistente Interactivo para tu Modelo de Negocio',
+      subtitle:
+        ' Este chatbot te guiará paso a paso para definir los 9 bloques del Lienzo de Modelo de   Negocio (Business Model Canvas).',
+      footer: '',
+      getStarted: 'New Conversation',
+      inputPlaceholder: 'Escribe tu respuesta',
+    },
+  },
 };
 ---
 
-<!-- 4. El div contenedor. Si es 'embed', tendrá el ID de destino y aplicará clases/estilos. -->
+<link
+  href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
+  rel="stylesheet"
+/>
+<!-- 4. El div contenedor. Si es 'embed', tendrá el ID de destino y aplicará clases/estilos. --><!-- Estilos migrados a Tailwind -->
 <div id={embedTargetId} {...rest}>
-  {/* El CSS se carga una sola vez desde el CDN */}
-  <link
-    href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
-    rel="stylesheet"
-  />
-
-  {/* Este script importa y ejecuta el chat con nuestra configuración */}
-  <script define:vars={{ options: chatOptions }} type="module">
-    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-    createChat(options);
-  </script>
+  <div
+    id={embedTargetId}
+    class="n8n-chat-embed w-full h-[600px] max-w-lg mx-auto rounded-xl shadow-lg overflow-hidden relative bg-white"
+    {...rest}
+  >
+    <script define:vars={{ options: chatOptions }} type="module">
+      import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+      createChat(options);
+    </script>
+  </div>
 </div>
+
+<style is:global>
+  /* --- 1. CONFIGURACIÓN GENERAL Y PALETA DE COLORES "ZEN" --- */
+  :root {
+    --color-primary-accent: #588157;
+    --color-bot-bubble: #ffffff;
+    --color-background: #f4f3ee;
+    --color-text-dark: #344e41;
+    --color-text-light: #ffffff;
+    --color-header-bg: #3a5a40;
+
+    --chat--font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      sans-serif;
+    --chat--border-radius: 0.75rem;
+
+    --chat--message--user--background: var(--color-primary-accent);
+    --chat--message--user--color: var(--color-text-light);
+    --chat--message--bot--background: var(--color-bot-bubble);
+    --chat--message--bot--color: var(--color-text-dark);
+
+    --chat--header--background: var(--color-header-bg);
+    --chat--header--color: var(--color-text-light);
+    --chat--body--background: var(--color-background);
+  }
+
+  /* --- 2. ENCABEZADO REDONDEADO --- */
+  .chat-header {
+    padding: 1.5rem;
+    border-bottom: none;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+  .chat-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  .chat-header p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+  }
+
+  /* --- 3. BURBUJAS DE MENSAJE Y DINÁMICA DE GRUPO --- */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .chat-message {
+    padding: 0.75rem 1.25rem;
+    max-width: 80%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-bottom: 0.25rem; /* Reducimos el margen base */
+    animation: fadeIn 0.3s ease-out; /* RETOQUE: Animación de entrada */
+  }
+
+  /* RETOQUE: Agrupación de mensajes del bot */
+  .chat-message-from-bot + .chat-message-from-bot {
+    margin-top: 0.25rem;
+    border-top-left-radius: 0.5rem; /* Hace que las burbujas consecutivas se "peguen" */
+  }
+
+  /* Separación mayor cuando cambia el interlocutor */
+  .chat-message-from-bot + .chat-message-from-user,
+  .chat-message-from-user + .chat-message-from-bot {
+    margin-top: 1rem;
+  }
+
+  /* --- 4. FOOTER Y ÁREA DE ENTRADA PERFECCIONADA --- */
+  .chat-footer {
+    padding: 1rem;
+    border-top: none;
+    background: linear-gradient(
+      to top,
+      var(--color-background),
+      transparent
+    ); /* RETOQUE: Degradado suave */
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+  .chat-inputs {
+    display: flex; /* Asegura la alineación horizontal */
+    width: 100%; /* Ocupa todo el espacio del footer */
+    max-width: 95%; /* Un límite para que no se pegue a los bordes */
+    margin: 0 auto; /* Centra la píldora */
+    background-color: #fff;
+    border-radius: 2rem;
+    padding: 0.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    transition: box-shadow 0.2s ease; /* RETOQUE: Transición para el foco */
+  }
+
+  /* RETOQUE: Efecto de foco en toda la píldora */
+  .chat-input textarea:focus-within,
+  .chat-input textarea:focus {
+    outline: none;
+  }
+  .chat-input textarea:focus-within ~ .chat-inputs,
+  .chat-input textarea:focus ~ .chat-inputs {
+    box-shadow: 0 4px 20px rgba(88, 129, 87, 0.25); /* Sombra con tu color primario */
+  }
+
+  .chat-input textarea {
+    background: transparent;
+    border: none;
+    flex-grow: 1;
+    padding: 0 1rem; /* RETOQUE: Más espacio interno */
+    color: var(--color-text-dark);
+  }
+
+  .chat-input-send-button {
+    background-color: var(--color-primary-accent);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease; /* RETOQUE: Transición para el hover */
+  }
+
+  .chat-input-send-button:not(:disabled):hover {
+    transform: scale(1.1); /* RETOQUE: Efecto de escala al pasar el mouse */
+  }
+
+  /* --- 5. SCROLLBAR ESTILIZADO --- */
+  .chat-body::-webkit-scrollbar {
+    width: 8px;
+  }
+  .chat-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .chat-body::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+    border: 3px solid var(--color-background);
+  }
+  .chat-layout .chat-footer {
+    border-top: none;
+  }
+</style>
